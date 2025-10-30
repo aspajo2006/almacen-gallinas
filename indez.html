@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almacén de Gallinas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      color: #333;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 { color: #c0392b; }
+    form {
+      background: white;
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    button {
+      background: #27ae60;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover { background: #2ecc71; }
+  </style>
+</head>
+<body>
+  <h1>🐔 Almacén de Gallinas</h1>
+  <form id="formGallinas">
+    <input type="date" id="fecha" required>
+    <input type="number" id="cantidad" placeholder="Cantidad" required>
+    <select id="tipo" required>
+      <option value="Entrada">Entrada</option>
+      <option value="Salida">Salida</option>
+    </select>
+    <button type="submit">Registrar</button>
+  </form>
+
+  <p id="mensaje"></p>
+
+  <script>
+    // 🔑 Conecta con tu base de datos Supabase
+    // Asegúrate de que tu URL coincida con el ID de la clave: eerdmjeovafycfycorlw
+const supabaseUrl = 'https://eerdmjeovafycfycorlw.supabase.co'; 
+
+// Esta es la clave anon que acabas de proporcionar
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcmRtamVvdmFmeWNmeWNvcmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE4NTI3NjUsImV4cCI6MjA3NzQyODc2NX0.ktfLSyKvqr-U3oDkEwroSWuZ_aU8SDubVHgARY2ASLk'; 
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+// ... el resto de tu código para INSERT y SELECT ...
+    const form = document.getElementById('formGallinas');
+    const mensaje = document.getElementById('mensaje');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fecha = document.getElementById('fecha').value;
+      const cantidad = parseInt(document.getElementById('cantidad').value);
+      const tipo = document.getElementById('tipo').value;
+
+      const subtotal = cantidad * 5; // cada gallina cuesta 5 soles
+
+      const { data, error } = await supabase
+        .from('gallinas')
+        .insert([{ fecha, cantidad, subtotal, tipo }]);
+
+      if (error) {
+        console.error(error);
+        mensaje.textContent = "❌ Error al registrar: " + error.message;
+        mensaje.style.color = "red";
+      } else {
+        mensaje.textContent = "✅ Registro guardado correctamente.";
+        mensaje.style.color = "green";
+        form.reset();
+      }
+    });
+  </script>
+</body>
+</html>
+
